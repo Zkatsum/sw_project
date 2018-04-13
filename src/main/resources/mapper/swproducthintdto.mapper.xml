@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <mapper namespace="com.qianfeng.sw.preceding.dto.SwProductHintMapper">
+    <resultMap id="SwProductHintResultMap" type="com.qianfeng.sw.preceding.dto.SwProductHintDTO">
+        <id property="swProductHintId" column="sw_product_hint_id" javaType="java.lang.Integer"/>
+        <result property="swProductHintName" column="sw_product_hint_name" javaType="java.lang.String"/>
+
+    </resultMap>
+</mapper>

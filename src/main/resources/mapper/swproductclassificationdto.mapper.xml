@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <mapper namespace="com.qianfeng.sw.preceding.dto.SwProductClassificationMapper">
+    <resultMap id="SwProductClassificationResultMap" type="com.qianfeng.sw.preceding.dto.SwProductClassificationDTO">
+        <id property="swProductClassificationId" column="sw_product_classification_id" javaType="java.lang.Integer"/>
+        <result property="swProductClassificationName" column="sw_product_classification_name" javaType="java.lang.String"/>
+        <result property="swProductClassificationPrice" column="sw_product_classification_price" javaType="java.lang.Integer"/>
+
+    </resultMap>
+</mapper>

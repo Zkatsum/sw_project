@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qianfeng.sw.preceding.dto.SwProductSecondaryTypeMapper">
+    <resultMap id="SwProductSecondaryTypeResultMap" type="com.qianfeng.sw.preceding.dto.SwProductSecondaryTypeDTO">
+        <id property="swProductSecondaryTypeId" column="sw_product_secondary_type_id" javaType="java.lang.Integer"/>
+        <result property="swProductSecondaryTypeName" column="sw_product_secondary_type_name" javaType="java.lang.String"/>
+        <result property="swProductSecondaryTypePrice" column="sw_product_secondary_type_price" javaType="java.lang.Integer"/>
+
+    </resultMap>
+</mapper>

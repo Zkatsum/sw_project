@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qianfeng.sw.swuser">
+     <resultMap id="user" type="com.qianfeng.sw.preceding.dto.SwUserDTO">
+        <id property="userId" column="sw_user_id" javaType="java.lang.Integer" />
+        <result property="userPhone" column="sw_user_phone" javaType="java.lang.String"/>
+         <result property="userEmail" column="sw_user_email" javaType="java.lang.String"/>
+         <result property="userName" column="sw_user_name" javaType="java.lang.String"/>
+         <result property="userPassword" column="sw_user_password" javaType="java.lang.String"/>
+         <result property="userSalt" column="sw_user_salt" javaType="java.lang.String"/>
+    </resultMap>
+    <!--利用手机号查询密码，名字查询出来是为了能在页面上显示-->
+    <select id="uservalue" resultMap="user">
+        SELECT sw_user_phone,sw_user_name,sw_user_password,sw_user_salt FROM sw_user WHERE sw_user_phone= #{userPhone}
+
+    </select>
+    <!--利用邮箱查询密码-->
+    <select id="user_email" resultMap="user">
+    SELECT sw_user_phone,sw_user_name,sw_user_password,sw_user_salt FROM sw_user WHERE sw_user_email=#{userEmail}
+
+    </select>
+    <!--利用姓名查询密码-->
+    <select id="user_name" resultMap="user">
+        SELECT sw_user_phone,sw_user_name,sw_user_password,sw_user_salt FROM sw_user WHERE sw_user_name=#{userName}
+    </select>
+    <!--注册-->
+    <insert id="user_insert">
+        insert into sw_user(sw_user_phone,sw_user_name,sw_user_password,sw_user_salt)values(
+
+#{userPhone},#{userName},#{userPassword},#{userSalt})
+
+    </insert>
+
+    
+</mapper>
+

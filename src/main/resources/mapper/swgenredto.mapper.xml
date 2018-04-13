@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <mapper namespace="com.qianfeng.sw.preceding.dto.SwGenreMapper">
+    <resultMap id="GenreResultMap" type="com.qianfeng.sw.preceding.dto.SwGenreDTO">
+        <id property="swGenreId" column="sw_genre_id" javaType="java.lang.Integer"/>
+        <result property="swGenreName" column="sw_genre_name" javaType="java.lang.String"/>
+
+        <collection property="swConditionDTOList" ofType="com.qianfeng.sw.preceding.dto.SwConditionDTO">
+            <id property="swConditionId" column="sw_condition_id" javaType="java.lang.Integer"/>
+            <result property="swConditionName" column="sw_condition_name" javaType="java.lang.String"/>
+        </collection>
+
+
+
+    </resultMap>
+
+    <select id="selectTest" resultMap="GenreResultMap">
+        select sw_genre_id,sw_genre_name,sw_condition_id,sw_condition_name from  sw_genre
+        join sw_condition join sw_gc
+        on sw_genre_id = sw_gc_genre_id and sw_gc_condition_id = sw_condition_id and sw_genre_id = #{swGenreId}
+    </select>
+
+</mapper>

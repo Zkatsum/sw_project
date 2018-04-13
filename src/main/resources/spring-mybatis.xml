@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations" value="classpath:jdbc.properties"/>
+    </bean>
+    <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="driverClass" value="${jdbc.driver}"/>
+            <property name="jdbcUrl" value="${jdbc.url}"/>
+            <property name="user" value="${jdbc.user}"/>
+            <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+     <bean name="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"   >
+           <property name="dataSource" ref="dataSource"/>
+         <property name="mapperLocations">
+             <list>
+                 <value>classpath:mapper/*mb.xml</value>
+                 <value>classpath:mapper/*.mapper.xml</value>
+             </list>
+         </property>
+         <property name="configurationProperties" value="classpath:log4j.properties"/>
+     </bean>
+    <!--将sqlSessionFactoryBean交给父类sqlSession，直接将SqlSession注入使用-->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory" />
+    </bean>
+<!--事务配置-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    </beans>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <mapper namespace="com.qianfeng.sw.preceding.dto.SwConditionMapper">
+    <resultMap id="SwConditionResultMap" type="com.qianfeng.sw.preceding.dto.SwConditionDTO">
+        <id property="swConditionId" column="sw_condition_id" javaType="java.lang.Integer" />
+        <result property="swConditionName" column="sw_condition_name" javaType="java.lang.String"/>
+
+    </resultMap>
+
+</mapper>
