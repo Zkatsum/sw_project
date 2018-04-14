@@ -70,7 +70,7 @@ public class SwUserService implements ISwUserService{
         return swUserDAO.getUserInsert(swUserDTO);
     }
 
-    public static void UserLogout(String username){
+    public static void UserLogout(SwUserDTO username){
         if(SessionLisener.map.get( username ) != null) {
            HttpSession session = SessionLisener.map.get(username);
            /*  SessionLisener.map.remove(username);*/

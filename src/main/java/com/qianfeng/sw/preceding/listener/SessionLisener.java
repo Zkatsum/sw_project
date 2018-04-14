@@ -13,8 +13,8 @@ import java.util.Map;
  * Created by admin on 2018/4/11.
  */
 public class SessionLisener implements HttpSessionListener {
-
-    public static Map<String,HttpSession> map=new HashMap<String,HttpSession>();
+    public static  SwUserDTO swUserDTO = new SwUserDTO();
+    public static Map<SwUserDTO,HttpSession> map=new HashMap<SwUserDTO,HttpSession>();
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
 

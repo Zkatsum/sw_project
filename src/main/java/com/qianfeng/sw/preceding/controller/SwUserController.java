@@ -32,6 +32,8 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/user")
 public class SwUserController {
 
+
+
     @Autowired
     private ISwUserService swUserService;
     /**
@@ -50,21 +52,21 @@ public class SwUserController {
      */
      @RequestMapping("/login")
      @ResponseBody
-     public String getUserLogin(ModelMap modelMap, HttpSession session, HttpServletRequest req, String userPhone, String userPassword){
+     public String getUserLogin( HttpSession session, HttpServletRequest req, String userPhone, String userPassword){
 
 
          try {
-
+             SwUserDTO swUserDTO = SessionLisener.swUserDTO;
              /**
               * 该账号已经被登陆
               */
-
-             if(null!= SessionLisener.map.get(userPhone)){
+             System.out.println(SessionLisener.map.get(swUserDTO));
+             if(null!= SessionLisener.map.get(swUserDTO)){
 
                  /**
                   * 将已经登录的信息删除
                   */
-                 SwUserService.UserLogout(userPhone);
+                 SwUserService.UserLogout(swUserDTO);
 
 
              }else{
@@ -79,9 +81,10 @@ public class SwUserController {
                   for(int i=0;i<UserRealm.LIST_USERDTO.size();i++){
 
                       SwUserDTO  swuserDto=UserRealm.LIST_USERDTO.get(i);
-                      SessionLisener.map.put(userPhone, session);
+                      SessionLisener.map.put(swUserDTO, session);
                       session.setAttribute("users", swuserDto);
-                      if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())) {
+                      if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserName()
+                      )||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserEmail())) {
 
                           session.setAttribute("userPhone",userPhone);
                       }
@@ -98,9 +101,9 @@ public class SwUserController {
              e.printStackTrace();
               return "userPhoneNull";
          }
-         SwUserDTO swUserDTO = (SwUserDTO) req.getSession().getAttribute("users");
+         SwUserDTO swUserDTO1 = (SwUserDTO) req.getSession().getAttribute("users");
 
-         if(null==swUserDTO){
+         if(null==swUserDTO1){
 
              return "takeUp";
          }else{
@@ -113,10 +116,22 @@ public class SwUserController {
      *
      */
     @RequestMapping("/click")
-    public String getclick(String userPhone){
+    public String getclick(String userPhone,HttpSession session){
+        SwUserDTO swUserDTO = SessionLisener.swUserDTO;
+        SessionLisener.map.remove(swUserDTO);
+        /**
+         * 清空集合，删除session,注销的时候
+         */
+        session.removeAttribute("userPhone");
+        for(int i=0;i<UserRealm.LIST_USERDTO.size();i++) {
 
-        SessionLisener.map.remove(userPhone);
+            SwUserDTO swuserDto = UserRealm.LIST_USERDTO.get(i);
 
+            if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserName()
+            )||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserEmail())) {
+                UserRealm.LIST_USERDTO.remove(swuserDto);
+            }
+        }
 
         return "index";
     }
@@ -130,9 +145,10 @@ public class SwUserController {
         String userPhone = (String) session.getAttribute("userPhone");
         for(int i=0;i<UserRealm.LIST_USERDTO.size();i++) {
              SwUserDTO swuserDto = UserRealm.LIST_USERDTO.get(i);
-            if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())) {
+            if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserName()
+            )||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserEmail()))  {
                 modelMap.put("userName", swuserDto.getUserName());
-                modelMap.put("userPhone", swuserDto.getUserPhone());
+                modelMap.put("userPhone", userPhone);
             }
         }
          return "index";
