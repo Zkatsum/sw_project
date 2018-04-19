@@ -1,22 +1,24 @@
 package com.qianfeng.sw.preceding.controller;
 
+import com.qianfeng.sw.preceding.config.UserConfig;
 import com.qianfeng.sw.preceding.dto.SwUserDTO;
-import com.qianfeng.sw.preceding.listener.SessionLisener;
 import com.qianfeng.sw.preceding.service.ISwUserService;
 import com.qianfeng.sw.preceding.service.impl.SwUserService;
 import com.qianfeng.sw.realm.UserRealm;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.session.Session;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SessionStatus;
@@ -32,7 +34,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/user")
 public class SwUserController {
 
-
+    private static final Logger logger = Logger.getLogger("SwUserController");
 
     @Autowired
     private ISwUserService swUserService;
@@ -42,94 +44,104 @@ public class SwUserController {
      * @return 登录页面地址
      */
 
-     @RequestMapping("/loginpage")
-     public String getLoginPage(){
-         return "login";
-     }
+    @RequestMapping("/loginpage")
+    public String getLoginPage(){
+        return "login";
+    }
     /**
      * 登录方法
      * @return 到index页面
      */
-     @RequestMapping("/login")
-     @ResponseBody
-     public String getUserLogin( HttpSession session, HttpServletRequest req, String userPhone, String userPassword){
+    @RequestMapping("/login")
+    @ResponseBody
+    public String getUserLogin(ModelMap modelMap, HttpSession session, HttpServletRequest req, String userPhone, String userPassword){
 
 
-         try {
-             SwUserDTO swUserDTO = SessionLisener.swUserDTO;
-             /**
-              * 该账号已经被登陆
-              */
-             System.out.println(SessionLisener.map.get(swUserDTO));
-             if(null!= SessionLisener.map.get(swUserDTO)){
+        try {
 
-                 /**
-                  * 将已经登录的信息删除
-                  */
-                 SwUserService.UserLogout(swUserDTO);
+            /**
+             * 该账号已经被登陆
+             */
 
+            if(null!= UserConfig.Utlity.map.get(userPhone)){
 
-             }else{
-
-                 if(!StringUtils.equalsIgnoreCase(userPhone,"")&&userPhone!=null) {
+                /**
+                 * 将已经登录的信息删除
+                 */
+                SwUserService.UserLogout(userPhone);
 
 
-                  UsernamePasswordToken token = new UsernamePasswordToken(userPhone, userPassword);
-                  Subject subject = SecurityUtils.getSubject();
-                  subject.login(token);
+            }else{
 
-                  for(int i=0;i<UserRealm.LIST_USERDTO.size();i++){
-
-                      SwUserDTO  swuserDto=UserRealm.LIST_USERDTO.get(i);
-                      SessionLisener.map.put(swUserDTO, session);
-                      session.setAttribute("users", swuserDto);
-                      if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserName()
-                      )||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserEmail())) {
-
-                          session.setAttribute("userPhone",userPhone);
-                      }
-                  }
+                if(!StringUtils.equalsIgnoreCase(userPhone,"")&&userPhone!=null) {
 
 
-                  }
-             }
-         } catch (UnknownAccountException e){
-             e.printStackTrace();
-             return "userPassfailure";
+                    UsernamePasswordToken token = new UsernamePasswordToken(userPhone, userPassword);
+                    Subject subject = SecurityUtils.getSubject();
+                    subject.login(token);
 
-         } catch (AuthenticationException e){
-             e.printStackTrace();
-              return "userPhoneNull";
-         }
-         SwUserDTO swUserDTO1 = (SwUserDTO) req.getSession().getAttribute("users");
+                    for(int i=0;i<UserRealm.LIST_USERDTO.size();i++){
 
-         if(null==swUserDTO1){
+                        SwUserDTO  swuserDto=UserRealm.LIST_USERDTO.get(i);
+                        UserConfig.Utlity.map.put(userPhone, session);
+                        HttpSession httpSession = UserConfig.Utlity.map.get(userPhone);
+                        if(logger.isInfoEnabled()){
+                            logger.info(httpSession.toString());
+                        }
+                        session.setAttribute("users", swuserDto);
+//                        if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())) {
 
-             return "takeUp";
-         }else{
-             return "success";
-         }
+                            session.setAttribute("userPhone",userPhone);
+//                        }
+                    }
 
 
-     }
+                }
+            }
+        } catch (UnknownAccountException e){
+            e.printStackTrace();
+            return "userPassfailure";
+
+        } catch (AuthenticationException e){
+            e.printStackTrace();
+            return "userPhoneNull";
+        }
+        SwUserDTO swUserDTO = (SwUserDTO) req.getSession().getAttribute("users");
+
+        if(null==swUserDTO){
+
+            return "takeUp";
+        }else{
+            return "success";
+        }
+
+
+    }
     /**
      *
      */
     @RequestMapping("/click")
-    public String getclick(String userPhone,HttpSession session){
-        SwUserDTO swUserDTO = SessionLisener.swUserDTO;
-        SessionLisener.map.remove(swUserDTO);
-        /**
-         * 清空集合，删除session,注销的时候
-         */
-        session.removeAttribute("userPhone");
+    public String getclick(String userPhone ,HttpSession session){
+
+        if(logger.isInfoEnabled()){
+            logger.info(userPhone);
+        }
+
         for(int i=0;i<UserRealm.LIST_USERDTO.size();i++) {
 
-            SwUserDTO swuserDto = UserRealm.LIST_USERDTO.get(i);
+            UserConfig.Utlity.swUserDTO = UserRealm.LIST_USERDTO.get(i);
 
-            if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserName()
-            )||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserEmail())) {
-                UserRealm.LIST_USERDTO.remove(swuserDto);
+            HttpSession httpSession = UserConfig.Utlity.map.get(userPhone);
+            if(logger.isInfoEnabled()){
+                logger.info(httpSession+"==============");
+            }
+
+            if(StringUtils.equalsIgnoreCase(userPhone,UserConfig.Utlity.swUserDTO.getUserPhone())||StringUtils.equalsIgnoreCase(userPhone,UserConfig.Utlity.swUserDTO.getUserName()
+            )||StringUtils.equalsIgnoreCase(userPhone,UserConfig.Utlity.swUserDTO.getUserEmail())) {
+                session.removeAttribute("users");
+                session.removeAttribute("userPhone");
+                UserConfig.Utlity.map.remove(userPhone);
+                UserRealm.LIST_USERDTO.remove(userPhone);
             }
         }
 
@@ -144,14 +156,13 @@ public class SwUserController {
     public String getIndexPage(ModelMap modelMap,HttpSession session){
         String userPhone = (String) session.getAttribute("userPhone");
         for(int i=0;i<UserRealm.LIST_USERDTO.size();i++) {
-             SwUserDTO swuserDto = UserRealm.LIST_USERDTO.get(i);
-            if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserName()
-            )||StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserEmail()))  {
+            SwUserDTO swuserDto = UserRealm.LIST_USERDTO.get(i);
+//            if(StringUtils.equalsIgnoreCase(userPhone,swuserDto.getUserPhone())) {
                 modelMap.put("userName", swuserDto.getUserName());
-                modelMap.put("userPhone", userPhone);
-            }
+                modelMap.put("userPhone", swuserDto.getUserPhone());
+//            }
         }
-         return "index";
+        return "index";
     }
     @RequestMapping("/index")
     public String getIndex(ModelMap modelMap){
@@ -175,7 +186,7 @@ public class SwUserController {
 
         String codes = (String) req.getSession().getAttribute("code");
         if(!StringUtils.equalsIgnoreCase(codes,code)){
-             return "codeFailure";
+            return "codeFailure";
         }
 
         if(swUserDTO.equals(null)||swUserDTO.equals("")){
@@ -189,5 +200,92 @@ public class SwUserController {
     }
 
 
+
+    /**
+     * 跳转到个人信息页面
+     * @param session
+     * @param modelMap
+     * @param request
+     * @return 个人信息页面
+     */
+    @RequestMapping("/personPage")
+    public String Person(HttpSession session,ModelMap modelMap,HttpServletRequest request){
+        SwUserDTO user = (SwUserDTO) request.getSession().getAttribute("user");
+
+        SwUserDTO userNameLogin = swUserService.getUserAll(user.getUserName());
+        modelMap.put("user",userNameLogin);
+        return "person";
+    }
+
+    /**
+     * 编辑个人信息
+     * @param id
+     * @param session
+     * @param modelMap
+     * @param request
+     * @return 个人信息修改
+     */
+    @RequestMapping("/personUp/{id}")
+    public String updatePerson(@PathVariable("id") Integer id,HttpSession session,ModelMap modelMap,HttpServletRequest request){
+        SwUserDTO user = (SwUserDTO) request.getSession().getAttribute("user");
+
+        SwUserDTO userNameLogin = swUserService.getUserAll(user.getUserName());
+        modelMap.put("users",userNameLogin);
+        return "person1";
+    }
+
+    /**
+     * 完成修改跳转
+     * @param id
+     * @param session
+     * @param modelMap
+     * @param request
+     * @param userEmail
+     * @param userPhone
+     * @return 个人信息
+     */
+    @RequestMapping("/personSave/{id}")
+    public String savePerson(@PathVariable("id")Integer id,
+                             HttpSession session,ModelMap modelMap,HttpServletRequest request,String userEmail,String userPhone){
+
+        SwUserDTO user = (SwUserDTO) request.getSession().getAttribute("users");
+        SwUserDTO user1 = swUserService.getUserAll(user.getUserName());
+
+        user1.setUserPhone(userPhone);
+        user1.setUserEmail(userEmail);
+        swUserService.updateUser(user1);
+        modelMap.put("user",user1);
+        return "person";
+    }
+
+    /**
+     * 跳转到密码修改
+     * @param modelMap
+     * @return 密码修改页面
+     */
+    @RequestMapping("/passwordUp")
+    public String passwordUp(ModelMap modelMap){
+        return "passwordUp";
+    }
+
+    /**
+     * 完成密码修改
+     * @param session
+     * @param modelMap
+     * @param request
+     * @param newpassword
+     * @return 个人信息
+     */
+    @RequestMapping("/passwordUp1")
+    public String passwordUp1(HttpSession session,ModelMap modelMap,HttpServletRequest request,String newpassword){
+        SwUserDTO user = (SwUserDTO) request.getSession().getAttribute("user");
+        SimpleHash simpleHash = new SimpleHash("MD5", newpassword, user.getUserSalt());
+        SwUserDTO user1 = swUserService.getUserAll(user.getUserName());
+
+        user1.setUserPassword(simpleHash.toString());
+        swUserService.passwordUp(user1);
+        modelMap.put("user",user1);
+        return "person";
+    }
 
 }

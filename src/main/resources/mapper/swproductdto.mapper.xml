@@ -12,4 +12,19 @@
         <result property="swProductImage" column="sw_product_image" javaType="java.lang.String"/>
 
     </resultMap>
+
+    <update id="updateAllProduct">
+        update sw_product p join sw_pc pc join sw_pdt ppdt
+        set p.sw_product_name=#{sw_product_name},
+        p.sw_product_number=333,p.sw_product_price=3280,p.sw_product_maxPrice=4998,p.sw_product_image='images/3.jpg',
+        p.sw_product_genre_id=1,p.sw_product_product_type_id=1,ppdt.sw_pdt_place_departure_two_id=4,pc.sw_pc_city_id=52
+        where p.sw_product_id = ppdt.sw_pdt_product_id
+        and pc.sw_pc_product_id = p.sw_product_id
+        and p.sw_product_id = #{sw_product_id}
+        and ppdt.sw_pdt_place_departure_two_id = 4
+        and pc.sw_pc_city_id = 52;
+    </update>
+
+
+
 </mapper>

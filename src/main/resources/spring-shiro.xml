@@ -11,10 +11,10 @@
         <property name="realms">
             <list>
                 <ref bean="myRealm"/>
-                <ref bean="MybatisRealm"/>
+                <!--<ref bean="MybatisRealm"/>-->
             </list>
         </property>
     </bean>
     <bean name="myRealm"  class="com.qianfeng.sw.realm.UserRealm"/>
-    <bean name="MybatisRealm" class="com.qianfeng.sw.realm.MybatisRealm"/>
+    <!--<bean name="MybatisRealm" class="com.qianfeng.sw.realm.MybatisRealm"/>-->
 </beans>

@@ -61,4 +61,22 @@ public class SwUserDAO implements ISwUserDAO {
         int insert = sqlSession.insert("com.qianfeng.sw.swuser.user_insert", swUserDTO);
         return insert;
     }
+
+    @Override
+    public Integer updateUser(SwUserDTO swUserDTO) {
+        int update = sqlSession.update("com.qianfeng.sw.swuser.user_update", swUserDTO);
+        return update;
+    }
+
+    @Override
+    public SwUserDTO getUserAll(String userName) {
+        SwUserDTO sw = sqlSession.selectOne("com.qianfeng.sw.swuser.user_all", userName);
+        return sw;
+    }
+
+    @Override
+    public Integer passwordUp(SwUserDTO swUserDTO) {
+        int update = sqlSession.update("com.qianfeng.sw.swuser.password_update", swUserDTO);
+        return update;
+    }
 }

@@ -39,11 +39,6 @@
             org.springframework.web.context.ContextLoaderListener
         </listener-class>
     </listener>
-    <listener>
-        <listener-class>
-            com.qianfeng.sw.preceding.listener.SessionLisener
-        </listener-class>
-    </listener>
 
     <!-- 首页 -->
     <welcome-file-list>

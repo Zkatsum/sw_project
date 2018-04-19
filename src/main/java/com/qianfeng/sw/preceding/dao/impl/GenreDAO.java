@@ -8,7 +8,9 @@ import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by asus on 2018/4/12.
@@ -31,6 +33,10 @@ public class GenreDAO implements IGenreDAO  {
             }
         }
 
+    }
+
+    public void testUpdate(HashMap<String ,Object>  map){
+        sqlSession.update("com.qianfeng.sw.preceding.dto.SwProductMapper.updateAllProduct",map);
     }
 
 }

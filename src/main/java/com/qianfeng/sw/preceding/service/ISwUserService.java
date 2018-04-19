@@ -22,4 +22,17 @@ public interface ISwUserService {
      * 用户注册方法
      */
     Integer  getUserInsert(SwUserDTO swUserDTO);
+    /**
+     * 用户修改方法
+     */
+    Integer  updateUser(SwUserDTO swUserDTO);
+    /**
+     * 查询全部属性方法
+     */
+    SwUserDTO getUserAll(String userName);
+    /**
+     * 修改密码方法
+     */
+    Integer passwordUp(SwUserDTO swUserDTO);
+
 }

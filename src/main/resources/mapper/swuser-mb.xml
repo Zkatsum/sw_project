@@ -23,7 +23,7 @@
     </select>
     <!--利用姓名查询密码-->
     <select id="user_name" resultMap="user">
-        SELECT sw_user_phone,sw_user_name,sw_user_password,sw_user_salt FROM sw_user WHERE sw_user_name=#{userName}
+        SELECT sw_user_phone,sw_user_email,sw_user_name,sw_user_password,sw_user_salt FROM sw_user WHERE sw_user_name=#{userName}
     </select>
     <!--注册-->
     <insert id="user_insert">
@@ -32,7 +32,17 @@
 #{userPhone},#{userName},#{userPassword},#{userSalt})
 
     </insert>
-
-    
+    <!--修改-->
+    <update id="user_update">
+    UPDATE sw_user set sw_user_phone=#{userPhone},sw_user_email=#{userEmail},sw_user_name=#{userName} WHERE sw_user_id=#{userId}
+</update>
+    <!--获取个人信息-->
+    <select id="user_all" resultMap="user">
+        SELECT sw_user_id,sw_user_phone,sw_user_email,sw_user_name,sw_user_password,sw_user_salt FROM sw_user WHERE sw_user_name=#{userName}
+    </select>
+    <!--修改-->
+    <update id="password_update">
+        UPDATE sw_user set sw_user_password=#{userPassword} WHERE sw_user_id=#{userId}
+    </update>
 </mapper>
 

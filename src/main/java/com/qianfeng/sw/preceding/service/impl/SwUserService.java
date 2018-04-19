@@ -1,8 +1,8 @@
 package com.qianfeng.sw.preceding.service.impl;
 
+import com.qianfeng.sw.preceding.config.UserConfig;
 import com.qianfeng.sw.preceding.dao.ISwUserDAO;
 import com.qianfeng.sw.preceding.dto.SwUserDTO;
-import com.qianfeng.sw.preceding.listener.SessionLisener;
 import com.qianfeng.sw.preceding.service.ISwUserService;
 import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -18,7 +18,6 @@ import java.util.Enumeration;
  * Created by wanggaiwei on 2018/4/10.
  */
 @Service
-
 public class SwUserService implements ISwUserService{
     @Autowired
     private ISwUserDAO swUserDAO;
@@ -70,18 +69,18 @@ public class SwUserService implements ISwUserService{
         return swUserDAO.getUserInsert(swUserDTO);
     }
 
-    public static void UserLogout(SwUserDTO username){
-        if(SessionLisener.map.get( username ) != null) {
-           HttpSession session = SessionLisener.map.get(username);
+    public static void UserLogout(String username){
+        if(UserConfig.Utlity.map.get( username ) != null) {
+            HttpSession session = UserConfig.Utlity.map.get(username);
            /*  SessionLisener.map.remove(username);*/
             /**
              * 获取所有的登录名
              */
-           Enumeration attributeNames = session.getAttributeNames();
+            Enumeration attributeNames = session.getAttributeNames();
             while (attributeNames.hasMoreElements()) {
                 String sessionName = (String) attributeNames.nextElement();
                 System.out.println(sessionName);
-             // 删除保存名字的Session
+                // 删除保存名字的Session
 
                 session.removeAttribute(sessionName);
             }
@@ -90,4 +89,28 @@ public class SwUserService implements ISwUserService{
 
         }
     }
+
+    /**
+     * 用户修改的方法
+     * @param swUserDTO
+     * @return
+     */
+    @Override
+    public Integer updateUser(SwUserDTO swUserDTO) {
+        Integer integer = swUserDAO.updateUser(swUserDTO);
+        return integer;
+    }
+
+    @Override
+    public SwUserDTO getUserAll(String userName) {
+        SwUserDTO userAll = swUserDAO.getUserAll(userName);
+        return userAll;
+    }
+
+    @Override
+    public Integer passwordUp(SwUserDTO swUserDTO) {
+        Integer integer = swUserDAO.passwordUp(swUserDTO);
+        return integer;
+    }
+
 }
